@@ -1,0 +1,118 @@
+﻿<Window x:Class="CryptoTrackerPro.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        Title="Crypto Real-Time Tracker" Height="600" Width="950"
+        Icon="/bitcoin.ico"
+        Background="#121212" Foreground="White"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="ModernContextMenu" TargetType="ContextMenu">
+            <Setter Property="Background" Value="#1e1e1e"/>
+            <Setter Property="BorderBrush" Value="#3d3d3d"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContextMenu">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4" Padding="0,5">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernMenuItem" TargetType="MenuItem">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Border x:Name="Bg" Background="Transparent" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter ContentSource="Header" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#3d3d3d"/>
+                                <Setter Property="Foreground" Value="#F7931A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
+            <ComboBox ItemsSource="{Binding Symbols}" 
+                      SelectedItem="{Binding SelectedSymbol}" 
+                      Width="140" Height="35" 
+                      VerticalContentAlignment="Center"
+                      Padding="10,0" FontSize="14" FontWeight="Bold"
+                      Background="#2d2d2d" Foreground="#F7931A" 
+                      BorderBrush="#3d3d3d" BorderThickness="1">
+                <ComboBox.Resources>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Background" Value="#2d2d2d"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F7931A"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ComboBox.Resources>
+            </ComboBox>
+            <TextBlock Text="{Binding SelectedSymbol}" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" Foreground="#F7931A" Margin="10,0,0,0"/>
+            <TextBlock Text="{Binding CurrentPrice, StringFormat='{}{0:N2} USD'}" 
+                       FontSize="32" Margin="30,0,0,0" Foreground="SpringGreen" VerticalAlignment="Center" FontWeight="SemiBold"/>
+        </StackPanel>
+
+        <lvc:CartesianChart Grid.Row="1"
+                            Series="{Binding Series}"
+                            Sections="{Binding Sections}"
+                            ZoomMode="None">
+        </lvc:CartesianChart>
+
+        <Border Grid.Row="2" Background="#1e1e1e" CornerRadius="10" Padding="15" Margin="0,20,0,0">
+            <DockPanel LastChildFill="False">
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                    <TextBlock Text="Riasztási szint (piros sáv teteje): " VerticalAlignment="Center" Foreground="Gray"/>
+                    <TextBox Text="{Binding AlertLevel, UpdateSourceTrigger=PropertyChanged}" 
+                             Width="120" Background="#2d2d2d" Foreground="White" 
+                             BorderThickness="1" BorderBrush="#ff3355" Padding="5" Margin="10,0"
+                             FontSize="14" VerticalContentAlignment="Center"/>
+                    <TextBlock Text="USD" VerticalAlignment="Center" Opacity="0.6"/>
+                </StackPanel>
+                <TextBlock DockPanel.Dock="Right" Text="Állapot: Figyelés aktív" 
+                           Foreground="#4CAF50" VerticalAlignment="Center" FontSize="12"/>
+            </DockPanel>
+        </Border>
+
+        <tb:TaskbarIcon x:Name="MyNotifyIcon" 
+                        IconSource="/bitcoin.ico" 
+                        ToolTipText="Crypto Tracker Fut"
+                        TrayMouseDoubleClick="MyNotifyIcon_TrayMouseDoubleClick">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu Style="{StaticResource ModernContextMenu}">
+                    <MenuItem Header="Megnyitás" Click="Open_Click" FontWeight="Bold" Style="{StaticResource ModernMenuItem}"/>
+                    <Separator Background="#3d3d3d" Margin="5,2"/>
+                    <MenuItem Header="Kilépés" Click="Exit_Click" Style="{StaticResource ModernMenuItem}"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
+    </Grid>
+</Window>
