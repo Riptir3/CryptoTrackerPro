@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
-using System.Data;
 using System.Net.Http;
 using System.Windows;
 
@@ -14,7 +12,7 @@ namespace CryptoTrackerPro
         {
             var sc = new ServiceCollection();
             sc.AddSingleton<HttpClient>();
-            sc.AddSingleton<ICryptoProvider, BinanceProvider>();
+            sc.AddSingleton<ICryptoProvider, BinanceWebSocketProvider>();
             sc.AddSingleton<MainViewModel>();
             sc.AddSingleton<MainWindow>();
             Services = sc.BuildServiceProvider();

@@ -1,7 +1,8 @@
-﻿using System.Windows;
-using System.Runtime.InteropServices;
-using System.Windows.Interop;
+﻿using CommunityToolkit.Mvvm.Messaging;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace CryptoTrackerPro
 {
@@ -15,6 +16,17 @@ namespace CryptoTrackerPro
             IntPtr hWnd = new WindowInteropHelper(this).EnsureHandle();
             int True = 1;
             DwmSetWindowAttribute(hWnd, 20, ref True, Marshal.SizeOf(typeof(int)));
+
+            WeakReferenceMessenger.Default.Register<CryptoAlertMessage>(this, (recipient, message) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    MyNotifyIcon.ShowNotification(
+                        title: "Kripto Riasztás",
+                        message: message.Value
+                    );
+                });
+            });
         }
 
         [DllImport("dwmapi.dll")]
