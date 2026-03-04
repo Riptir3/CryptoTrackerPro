@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using CryptoTrackerPro.ViewModels;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
